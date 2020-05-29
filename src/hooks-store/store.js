@@ -4,8 +4,17 @@ let globalState = {};
 let listeners = [];
 let actions = {};
 
-const useStore = props => {
+export const useStore = () => {
     const setState = useState(globalState)[1];
+
+    const dispatch = actionIndentifier => {
+        const newState = actions[actionIndentifier](globalState);
+        globalState = {...globalState, ...newState};
+
+        for (const listener of listeners){
+            listener(globalState);
+        }
+    }
 
     useEffect(() => {
         listeners.push(setState);
@@ -13,5 +22,14 @@ const useStore = props => {
         return () => {
             listeners = listeners.filter( li => li !== setState)
         }
-    },[])
+    },[setState])
+
+    return [globalState,dispatch];
+};
+
+export const initStore = (userActions,initialState) => {
+    if(initialState){
+        globalState = {...globalState, initialState}
+    }
+    actions = {...actions,...userActions};
 };
