@@ -22,11 +22,11 @@ export const useStore = (shouldListen = true) => {
         }
 
         return () => {
-        if(shouldListen){
+            if(shouldListen){
             listeners = listeners.filter( li => li !== setState)
+            }
         }
-        }
-    },[setState])
+    },[setState,shouldListen])
 
     return [globalState,dispatch];
 };
